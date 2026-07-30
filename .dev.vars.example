@@ -1,0 +1,3 @@
+# Cloudflare Access administrator allowlist.
+# Copy to .dev.vars only when testing authenticated requests locally.
+ADMIN_EMAILS=unitcirclexin@gmail.com
