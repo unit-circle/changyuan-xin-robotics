@@ -15,7 +15,7 @@
     {
       "binding": "DB",
       "database_name": "changyuan-xin-portfolio",
-      "database_id": "00000000-0000-4000-8000-000000000000",
+      "database_id": "0f607344-d108-480a-b6c1-35931013fd29",
       "migrations_dir": "./drizzle"
     }
   ],
