@@ -1,0 +1,1 @@
+ALTER TABLE `files` ADD `required_scope` text DEFAULT 'private_basic' NOT NULL;

@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 1200" role="img" aria-labelledby="title desc">
+  <title id="title">Layered neural network for robotic intelligence</title>
+  <desc id="desc">A complete multilayer neural network with input, hidden, attention, and output layers on a bright scientific background.</desc>
+  <defs>
+    <linearGradient id="bg" x1="40" y1="30" x2="680" y2="1170" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F9FCFF"/>
+      <stop offset=".48" stop-color="#EDF5FF"/>
+      <stop offset="1" stop-color="#F5EEFF"/>
+    </linearGradient>
+    <radialGradient id="halo" cx="0" cy="0" r="1" gradientTransform="translate(366 596) rotate(90) scale(440 335)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#36D8F4" stop-opacity=".2"/>
+      <stop offset=".48" stop-color="#7B61FF" stop-opacity=".1"/>
+      <stop offset="1" stop-color="#7B61FF" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="flow" x1="105" y1="600" x2="622" y2="600" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#24D5EE"/>
+      <stop offset=".52" stop-color="#436BFF"/>
+      <stop offset="1" stop-color="#9A54F5"/>
+    </linearGradient>
+    <linearGradient id="warm" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#FFC85A"/>
+      <stop offset="1" stop-color="#FF9C36"/>
+    </linearGradient>
+    <filter id="glow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="9" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="soft" x="-40%" y="-40%" width="180%" height="180%">
+      <feDropShadow dx="0" dy="14" stdDeviation="18" flood-color="#20407D" flood-opacity=".15"/>
+    </filter>
+    <pattern id="grid" width="44" height="44" patternUnits="userSpaceOnUse">
+      <path d="M44 0H0V44" fill="none" stroke="#315EAC" stroke-opacity=".075"/>
+    </pattern>
+  </defs>
+
+  <rect width="720" height="1200" rx="48" fill="url(#bg)"/>
+  <rect width="720" height="1200" rx="48" fill="url(#grid)"/>
+  <ellipse cx="360" cy="600" rx="335" ry="440" fill="url(#halo)"/>
+
+  <g fill="none" stroke="#6887B8" stroke-opacity=".22">
+    <circle cx="360" cy="600" r="294"/>
+    <circle cx="360" cy="600" r="246" stroke-dasharray="8 15"/>
+    <path d="M54 600h612M360 224v752"/>
+    <path d="M101 404c137 74 381 74 518 0M101 796c137-74 381-74 518 0"/>
+  </g>
+
+  <g opacity=".76" fill="#0D2B67" font-family="Georgia, serif">
+    <text x="66" y="92" font-size="26" font-style="italic">x ∈ ℝⁿ</text>
+    <text x="513" y="104" font-size="22" font-style="italic">y = fθ(x)</text>
+    <text x="78" y="1104" font-size="18">∇θ L · attention · policy</text>
+    <text x="510" y="1090" font-size="17">P(a|s)</text>
+  </g>
+
+  <g stroke="url(#flow)" stroke-width="2.2" stroke-opacity=".34">
+    <path d="M116 400L251 350M116 400l135 143m-135-143 135 290M116 500l135-150M116 500l135 43M116 500l135 147M116 600l135-250M116 600l135-57M116 600l135 90M116 700l135-157M116 700l135-53M116 700l135-310M116 800l135-257M116 800l135-153M116 800l135 43"/>
+    <path d="M251 350l142 92M251 350l142 158M251 543l142-101M251 543l142-35M251 647l142-139M251 647l142 111M251 690l142-182M251 690l142 68M251 843l142-335M251 843l142-85"/>
+    <path d="M393 442l145-82M393 442l145 160M393 508l145-148M393 508l145 94M393 758l145-156M393 758l145 82"/>
+    <path d="M538 360l88 240M538 602h88M538 840L626 600"/>
+  </g>
+
+  <g filter="url(#soft)">
+    <g fill="#FFF" stroke="#27CDE9" stroke-width="5">
+      <circle cx="116" cy="400" r="23"/><circle cx="116" cy="500" r="23"/><circle cx="116" cy="600" r="23"/><circle cx="116" cy="700" r="23"/><circle cx="116" cy="800" r="23"/>
+    </g>
+    <g fill="#F7FBFF" stroke="#4D79FF" stroke-width="5">
+      <circle cx="251" cy="350" r="27"/><circle cx="251" cy="543" r="27"/><circle cx="251" cy="647" r="27"/><circle cx="251" cy="690" r="27"/><circle cx="251" cy="843" r="27"/>
+    </g>
+    <g fill="#FBF8FF" stroke="#8B5CF6" stroke-width="6">
+      <circle cx="393" cy="442" r="32"/><circle cx="393" cy="508" r="32"/><circle cx="393" cy="758" r="32"/>
+    </g>
+    <g fill="#FFF" stroke="url(#warm)" stroke-width="6">
+      <circle cx="538" cy="360" r="29"/><circle cx="538" cy="602" r="29"/><circle cx="538" cy="840" r="29"/>
+    </g>
+    <circle cx="626" cy="600" r="42" fill="#102B69" stroke="#67E2F3" stroke-width="7" filter="url(#glow)"/>
+  </g>
+
+  <g fill="#24457D" font-family="Arial, sans-serif" font-size="14" font-weight="700" text-anchor="middle">
+    <text x="116" y="347">INPUT</text>
+    <text x="251" y="300">FEATURES</text>
+    <text x="393" y="393">LATENT</text>
+    <text x="538" y="310">ATTENTION</text>
+    <text x="626" y="666">POLICY</text>
+  </g>
+
+  <g fill="#FFF" font-family="Arial, sans-serif" font-weight="800" text-anchor="middle">
+    <text x="626" y="594" font-size="20">AI</text>
+    <text x="626" y="619" font-size="11" letter-spacing="2">DECISION</text>
+  </g>
+
+  <g transform="translate(70 940)">
+    <rect width="580" height="98" rx="24" fill="#FFFFFF" fill-opacity=".82" stroke="#5A82C4" stroke-opacity=".22"/>
+    <circle cx="53" cy="49" r="21" fill="#E6FAFF" stroke="#25CDE8" stroke-width="3"/>
+    <path d="M43 49h20M53 39v20" stroke="#1588CC" stroke-width="3" stroke-linecap="round"/>
+    <path d="M104 35h172M104 54h236M104 73h132" stroke="#55709C" stroke-width="8" stroke-linecap="round" stroke-opacity=".22"/>
+    <rect x="432" y="28" width="112" height="42" rx="21" fill="#725AF0"/>
+    <path d="M463 49h50M497 35l16 14-16 14" fill="none" stroke="#FFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <g fill="#7358EF">
+    <circle cx="72" cy="194" r="7"/><circle cx="648" cy="212" r="5"/><circle cx="622" cy="958" r="6"/>
+  </g>
+  <g fill="#20CAE6">
+    <circle cx="96" cy="254" r="4"/><circle cx="602" cy="170" r="8"/><circle cx="122" cy="910" r="6"/>
+  </g>
+</svg>
