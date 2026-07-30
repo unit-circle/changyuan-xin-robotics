@@ -40,3 +40,8 @@ next-env.d.ts
 /.wrangler/
 /outputs/
 /work/
+
+# Cloudflare local variables
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
