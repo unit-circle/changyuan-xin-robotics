@@ -56,16 +56,53 @@ export const accessCodes = sqliteTable("access_codes", {
   label: text("label").notNull(),
   codeHash: text("code_hash").notNull().unique(),
   scope: text("scope").notNull().default("private_basic"),
+  grantMode: text("grant_mode").notNull().default("scope"),
   expiresAt: text("expires_at"),
   maxUses: integer("max_uses"),
   useCount: integer("use_count").notNull().default(0),
+  sessionHours: integer("session_hours").notNull().default(24),
+  lastUsedAt: text("last_used_at"),
   active: integer("active", { mode: "boolean" }).notNull().default(true),
   createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const accessCodeFiles = sqliteTable(
+  "access_code_files",
+  {
+    accessCodeId: integer("access_code_id")
+      .notNull()
+      .references(() => accessCodes.id),
+    fileId: integer("file_id")
+      .notNull()
+      .references(() => files.id),
+    createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  },
+  (table) => [
+    uniqueIndex("access_code_files_pair_idx").on(
+      table.accessCodeId,
+      table.fileId,
+    ),
+  ],
+);
+
+export const privateSessions = sqliteTable("private_sessions", {
+  tokenHash: text("token_hash").primaryKey(),
+  accessCodeId: integer("access_code_id")
+    .notNull()
+    .references(() => accessCodes.id),
+  expiresAt: text("expires_at").notNull(),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  lastSeenAt: text("last_seen_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  revokedAt: text("revoked_at"),
 });
 
 export const accessLogs = sqliteTable("access_logs", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   accessCodeId: integer("access_code_id").references(() => accessCodes.id),
+  fileId: integer("file_id").references(() => files.id),
   action: text("action").notNull(),
+  ipHash: text("ip_hash").notNull().default(""),
+  userAgent: text("user_agent").notNull().default(""),
+  detail: text("detail").notNull().default(""),
   createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });

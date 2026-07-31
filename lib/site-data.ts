@@ -91,21 +91,48 @@ const schemaStatements = [
     label TEXT NOT NULL,
     code_hash TEXT NOT NULL UNIQUE,
     scope TEXT NOT NULL DEFAULT 'private_basic',
+    grant_mode TEXT NOT NULL DEFAULT 'scope',
     expires_at TEXT,
     max_uses INTEGER,
     use_count INTEGER NOT NULL DEFAULT 0,
+    session_hours INTEGER NOT NULL DEFAULT 24,
+    last_used_at TEXT,
     active INTEGER NOT NULL DEFAULT 1,
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
   )`,
+  `CREATE TABLE IF NOT EXISTS access_code_files (
+    access_code_id INTEGER NOT NULL REFERENCES access_codes(id),
+    file_id INTEGER NOT NULL REFERENCES files(id),
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (access_code_id, file_id)
+  )`,
+  `CREATE INDEX IF NOT EXISTS access_code_files_file_idx
+    ON access_code_files(file_id)`,
+  `CREATE TABLE IF NOT EXISTS private_sessions (
+    token_hash TEXT PRIMARY KEY,
+    access_code_id INTEGER NOT NULL REFERENCES access_codes(id),
+    expires_at TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    last_seen_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    revoked_at TEXT
+  )`,
+  `CREATE INDEX IF NOT EXISTS private_sessions_access_code_idx
+    ON private_sessions(access_code_id, expires_at)`,
   `CREATE TABLE IF NOT EXISTS access_logs (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     access_code_id INTEGER REFERENCES access_codes(id),
+    file_id INTEGER REFERENCES files(id),
     action TEXT NOT NULL,
+    ip_hash TEXT NOT NULL DEFAULT '',
+    user_agent TEXT NOT NULL DEFAULT '',
+    detail TEXT NOT NULL DEFAULT '',
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
   )`,
+  `CREATE INDEX IF NOT EXISTS access_logs_code_time_idx
+    ON access_logs(access_code_id, created_at)`,
 ] as const;
 
-let initialized = false;
+let initialization: Promise<void> | null = null;
 
 function bindings(): SiteEnv {
   return env as unknown as SiteEnv;
@@ -123,35 +150,87 @@ export function getUploadsBucket(): R2Bucket {
   return bucket;
 }
 
-export async function ensureDatabase(): Promise<D1Database> {
-  const database = getD1();
-  if (!initialized) {
-    await database.batch(
-      schemaStatements.map((statement) => database.prepare(statement)),
-    );
-    const fileColumns = await database
-      .prepare("PRAGMA table_info(files)")
-      .all<{ name: string }>();
-    if (
-      !fileColumns.results.some(
-        (column: { name: string }) => column.name === "required_scope",
-      )
-    ) {
-      await database
-        .prepare(
-          "ALTER TABLE files ADD COLUMN required_scope TEXT NOT NULL DEFAULT 'private_basic'",
-        )
-        .run();
-    }
-    initialized = true;
+async function ensureColumn(
+  database: D1Database,
+  table: string,
+  column: string,
+  definition: string,
+): Promise<void> {
+  const columns = await database
+    .prepare(`PRAGMA table_info(${table})`)
+    .all<{ name: string }>();
+  if (!columns.results.some((item) => item.name === column)) {
+    await database
+      .prepare(`ALTER TABLE ${table} ADD COLUMN ${column} ${definition}`)
+      .run();
   }
+}
 
+async function initializeDatabase(database: D1Database): Promise<void> {
+  await database.batch(
+    schemaStatements.map((statement) => database.prepare(statement)),
+  );
+  await ensureColumn(
+    database,
+    "files",
+    "required_scope",
+    "TEXT NOT NULL DEFAULT 'private_basic'",
+  );
+  await ensureColumn(
+    database,
+    "access_codes",
+    "grant_mode",
+    "TEXT NOT NULL DEFAULT 'scope'",
+  );
+  await ensureColumn(
+    database,
+    "access_codes",
+    "session_hours",
+    "INTEGER NOT NULL DEFAULT 24",
+  );
+  await ensureColumn(database, "access_codes", "last_used_at", "TEXT");
+  await ensureColumn(database, "access_logs", "file_id", "INTEGER");
+  await ensureColumn(
+    database,
+    "access_logs",
+    "ip_hash",
+    "TEXT NOT NULL DEFAULT ''",
+  );
+  await ensureColumn(
+    database,
+    "access_logs",
+    "user_agent",
+    "TEXT NOT NULL DEFAULT ''",
+  );
+  await ensureColumn(
+    database,
+    "access_logs",
+    "detail",
+    "TEXT NOT NULL DEFAULT ''",
+  );
+  await database
+    .prepare(
+      `CREATE INDEX IF NOT EXISTS access_logs_ip_time_idx
+       ON access_logs(ip_hash, created_at)`,
+    )
+    .run();
   const row = await database
     .prepare("SELECT COUNT(*) AS count FROM content_items")
     .first<{ count: number }>();
   if (!row || Number(row.count) === 0) {
     await seedDatabase(database);
   }
+}
+
+export async function ensureDatabase(): Promise<D1Database> {
+  const database = getD1();
+  if (!initialization) {
+    initialization = initializeDatabase(database).catch((error) => {
+      initialization = null;
+      throw error;
+    });
+  }
+  await initialization;
   return database;
 }
 

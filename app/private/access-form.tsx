@@ -41,7 +41,7 @@ export function AccessForm() {
         {status && <small className="private-error">{status}</small>}
       </div>
       <button disabled={busy} type="submit">
-        {busy ? "Verifying…" : "Continue"}
+        {busy ? "Verifying…" : "Continue securely"}
       </button>
     </form>
   );
