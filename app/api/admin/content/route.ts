@@ -18,7 +18,15 @@ export async function GET() {
   if (auth instanceof Response) return auth;
 
   const database = await ensureDatabase();
-  const [projects, coursework, publications, settings, files, accessCodes] =
+  const [
+    projects,
+    coursework,
+    publications,
+    settings,
+    files,
+    accessCodes,
+    accessLogs,
+  ] =
     await Promise.all([
       getContentItems("project", true),
       getContentItems("coursework", true),
@@ -29,8 +37,45 @@ export async function GET() {
         .all<Record<string, unknown>>(),
       database
         .prepare(
-          `SELECT id, label, scope, expires_at, max_uses, use_count, active, created_at
-           FROM access_codes ORDER BY created_at DESC, id DESC`,
+          `SELECT
+             c.id,
+             c.label,
+             c.scope,
+             c.grant_mode,
+             c.expires_at,
+             c.max_uses,
+             c.use_count,
+             c.session_hours,
+             c.last_used_at,
+             c.active,
+             c.created_at,
+             COUNT(DISTINCT acf.file_id) AS file_count,
+             GROUP_CONCAT(DISTINCT COALESCE(NULLIF(f.title, ''), f.name)) AS file_titles,
+             (
+               SELECT COUNT(*) FROM access_logs l
+               WHERE l.access_code_id = c.id AND l.action = 'download'
+             ) AS download_count
+           FROM access_codes c
+           LEFT JOIN access_code_files acf ON acf.access_code_id = c.id
+           LEFT JOIN files f ON f.id = acf.file_id
+           GROUP BY c.id
+           ORDER BY c.created_at DESC, c.id DESC`,
+        )
+        .all<Record<string, unknown>>(),
+      database
+        .prepare(
+          `SELECT
+             l.id,
+             l.action,
+             l.detail,
+             l.created_at,
+             c.label,
+             COALESCE(NULLIF(f.title, ''), f.name, '') AS file_title
+           FROM access_logs l
+           LEFT JOIN access_codes c ON c.id = l.access_code_id
+           LEFT JOIN files f ON f.id = l.file_id
+           ORDER BY l.created_at DESC, l.id DESC
+           LIMIT 60`,
         )
         .all<Record<string, unknown>>(),
     ]);
@@ -41,6 +86,7 @@ export async function GET() {
     content: { projects, coursework, publications },
     files: files.results,
     accessCodes: accessCodes.results,
+    accessLogs: accessLogs.results,
   });
 }
 
@@ -156,9 +202,28 @@ export async function DELETE(request: Request) {
       const { getUploadsBucket } = await import("@/lib/site-data");
       await getUploadsBucket().delete(file.key);
     }
-    await database.prepare("DELETE FROM files WHERE id = ?").bind(id).run();
+    await database.batch([
+      database
+        .prepare("DELETE FROM access_code_files WHERE file_id = ?")
+        .bind(id),
+      database
+        .prepare("UPDATE access_logs SET file_id = NULL WHERE file_id = ?")
+        .bind(id),
+      database.prepare("DELETE FROM files WHERE id = ?").bind(id),
+    ]);
   } else {
-    await database.prepare("DELETE FROM access_codes WHERE id = ?").bind(id).run();
+    await database.batch([
+      database
+        .prepare("DELETE FROM private_sessions WHERE access_code_id = ?")
+        .bind(id),
+      database
+        .prepare("DELETE FROM access_code_files WHERE access_code_id = ?")
+        .bind(id),
+      database
+        .prepare("DELETE FROM access_logs WHERE access_code_id = ?")
+        .bind(id),
+      database.prepare("DELETE FROM access_codes WHERE id = ?").bind(id),
+    ]);
   }
 
   revalidatePath("/", "layout");

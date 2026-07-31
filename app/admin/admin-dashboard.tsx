@@ -36,6 +36,7 @@ export type AdminData = {
   };
   files: Array<Record<string, unknown>>;
   accessCodes: Array<Record<string, unknown>>;
+  accessLogs: Array<Record<string, unknown>>;
 };
 
 const tabs = [
@@ -671,7 +672,10 @@ function FileManager({
       <section className="stored-files">
         <header><span>STORED FILES</span><strong>{data.files.length}</strong></header>
         {data.files.map((file) => {
-          const fileUrl = String(file.preview_url ?? `/media/${String(file.key)}`);
+          const fileUrl =
+            String(file.visibility) === "private"
+              ? `/api/admin/files/${String(file.id)}`
+              : String(file.preview_url ?? `/media/${String(file.key)}`);
           return (
           <article key={String(file.id)}>
             {String(file.content_type).startsWith("image/") && (
@@ -714,6 +718,10 @@ function AccessManager({
   setNotice: (message: string) => void;
 }) {
   const [createdCode, setCreatedCode] = useState("");
+  const [grantMode, setGrantMode] = useState<"selected" | "scope">("selected");
+  const privateFiles = data.files.filter(
+    (file) => String(file.visibility) === "private",
+  );
 
   async function create(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -722,10 +730,16 @@ function AccessManager({
       return;
     }
     const form = new FormData(event.currentTarget);
+    const expiresAt = String(form.get("expiresAt") ?? "").trim();
+    const payload = {
+      ...Object.fromEntries(form.entries()),
+      expiresAt: expiresAt ? new Date(expiresAt).toISOString() : "",
+      fileIds: form.getAll("fileIds").map(Number),
+    };
     const response = await fetch("/api/admin/access-codes", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify(Object.fromEntries(form.entries())),
+      body: JSON.stringify(payload),
     });
     const result = (await response.json()) as { code?: string; error?: string };
     if (!response.ok) {
@@ -752,11 +766,35 @@ function AccessManager({
     if (response.ok) await onChange();
   }
 
+  async function remove(id: number, label: string) {
+    if (preview) {
+      setNotice("Preview mode: access-code deletion is disabled.");
+      return;
+    }
+    if (!window.confirm(`Permanently delete the access code for “${label}”?`)) {
+      return;
+    }
+    const response = await fetch(
+      `/api/admin/content?kind=access-code&id=${id}`,
+      { method: "DELETE" },
+    );
+    setNotice(
+      response.ok
+        ? "Access code deleted."
+        : "Access code could not be deleted.",
+    );
+    if (response.ok) await onChange();
+  }
+
   return (
     <div className="access-manager">
       <form className="access-create" onSubmit={create}>
         <span>REVIEWER ACCESS</span>
         <h2>Create authorization code</h2>
+        <p className="access-guidance">
+          Create one code per reviewer. The readable code is displayed once
+          and is never stored in the database.
+        </p>
         <Field label="Reviewer or purpose" name="label" value="" uncontrolled />
         <div className="admin-field-grid">
           <label>
@@ -768,10 +806,55 @@ function AccessManager({
               <option value="private_full">Full access</option>
             </select>
           </label>
-          <Field label="Maximum uses" name="maxUses" type="number" value="" uncontrolled />
+          <label>
+            File permission mode
+            <select
+              name="grantMode"
+              onChange={(event) =>
+                setGrantMode(
+                  event.target.value === "scope" ? "scope" : "selected",
+                )
+              }
+              value={grantMode}
+            >
+              <option value="selected">Only selected files</option>
+              <option value="scope">All compatible files in this scope</option>
+            </select>
+          </label>
+          <Field label="Maximum successful logins" name="maxUses" type="number" value="" uncontrolled />
+          <Field label="Session duration in hours" name="sessionHours" type="number" value="24" uncontrolled />
           <Field label="Expiration" name="expiresAt" type="datetime-local" value="" uncontrolled />
         </div>
-        <button className="admin-save" type="submit">Generate secure code</button>
+        {grantMode === "selected" && (
+          <fieldset className="private-file-picker">
+            <legend>Files available to this reviewer</legend>
+            {privateFiles.length ? (
+              privateFiles.map((file) => (
+                <label key={String(file.id)}>
+                  <input name="fileIds" type="checkbox" value={String(file.id)} />
+                  <span>
+                    <strong>{String(file.title || file.name)}</strong>
+                    <small>
+                      {String(file.required_scope)} · {String(file.category)}
+                    </small>
+                  </span>
+                </label>
+              ))
+            ) : (
+              <p>
+                Upload at least one file with Private visibility before
+                generating a file-specific code.
+              </p>
+            )}
+          </fieldset>
+        )}
+        <button
+          className="admin-save"
+          disabled={grantMode === "selected" && !privateFiles.length}
+          type="submit"
+        >
+          Generate secure code
+        </button>
         {createdCode && (
           <div className="created-code">
             <span>COPY THIS CODE NOW</span>
@@ -785,19 +868,75 @@ function AccessManager({
         {data.accessCodes.map((code) => (
           <article key={String(code.id)}>
             <div>
-              <span>{String(code.scope)}</span>
+              <span>
+                {Boolean(code.active) ? "ACTIVE" : "REVOKED"} · {String(code.scope)}
+              </span>
               <h3>{String(code.label)}</h3>
               <small>
-                Uses: {String(code.use_count)}
+                Successful logins: {String(code.use_count)}
                 {code.max_uses ? ` / ${String(code.max_uses)}` : " / unlimited"}
-                {code.expires_at ? ` · Expires ${String(code.expires_at)}` : ""}
+                {" · Downloads: "}
+                {String(code.download_count ?? 0)}
+                {" · Session: "}
+                {String(code.session_hours ?? 24)}h
               </small>
+              <small>
+                {code.expires_at
+                  ? `Expires ${String(code.expires_at)} UTC`
+                  : "No expiration"}
+                {code.last_used_at
+                  ? ` · Last used ${String(code.last_used_at)} UTC`
+                  : " · Never used"}
+              </small>
+              <div className="access-file-summary">
+                {String(code.grant_mode) === "scope" ? (
+                  <span>All compatible files in this scope</span>
+                ) : Number(code.file_count ?? 0) ? (
+                  String(code.file_titles)
+                    .split(",")
+                    .filter(Boolean)
+                    .map((title) => <span key={title}>{title}</span>)
+                ) : (
+                  <span>No files assigned</span>
+                )}
+              </div>
             </div>
-            <button onClick={() => toggle(Number(code.id), !Boolean(code.active))}>
-              {Boolean(code.active) ? "Revoke" : "Reactivate"}
-            </button>
+            <aside>
+              <button onClick={() => toggle(Number(code.id), !Boolean(code.active))}>
+                {Boolean(code.active) ? "Revoke" : "Reactivate"}
+              </button>
+              <button
+                className="danger"
+                onClick={() => remove(Number(code.id), String(code.label))}
+              >
+                Delete
+              </button>
+            </aside>
           </article>
         ))}
+      </section>
+      <section className="access-activity">
+        <header>
+          <span>RECENT ACCESS ACTIVITY</span>
+          <strong>{data.accessLogs.length}</strong>
+        </header>
+        {data.accessLogs.length ? (
+          data.accessLogs.slice(0, 20).map((log) => (
+            <article key={String(log.id)}>
+              <span>{String(log.action).replaceAll("_", " ")}</span>
+              <div>
+                <strong>{String(log.label || "Unknown reviewer")}</strong>
+                <small>
+                  {String(log.file_title || log.detail || "Private access")}
+                  {" · "}
+                  {String(log.created_at)}
+                </small>
+              </div>
+            </article>
+          ))
+        ) : (
+          <p>No private access activity has been recorded yet.</p>
+        )}
       </section>
     </div>
   );
