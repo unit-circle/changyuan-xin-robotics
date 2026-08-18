@@ -3,7 +3,9 @@
 
 This script is the single source-to-site pipeline. It reads the known macros
 and environments, expands bilingual helpers, preserves math, copies raster
-figures, and renders TikZ fragments to SVG with the local TeX Live toolchain.
+figures, and renders TikZ fragments to browser-safe PNG files with the local
+TeX Live toolchain. PNG is intentional here: dvisvgm can collapse TeX line
+breaks in bilingual nodes onto one baseline, producing overlapping glyphs.
 """
 
 from __future__ import annotations
@@ -215,7 +217,7 @@ class TikzRenderer:
 
     def render(self, tikz_body: str, name_hint: str) -> str | None:
         digest = hashlib.sha1(tikz_body.encode("utf-8")).hexdigest()[:12]
-        target_name = f"{name_hint}-{digest}.svg"
+        target_name = f"{name_hint}-{digest}.png"
         public_path = MEDIA_ROOT / "figures" / target_name
         if public_path.exists():
             return f"/textbook/media/figures/{target_name}"
@@ -223,23 +225,22 @@ class TikzRenderer:
         workdir.mkdir(parents=True, exist_ok=True)
         (workdir / "figure.tex").write_text(FIGURE_PREAMBLE.replace("%BODY%", tikz_body), encoding="utf-8")
         xelatex = TEXLIVE_BIN / "xelatex.exe"
-        dvisvgm = TEXLIVE_BIN / "dvisvgm.exe"
         result = subprocess.run(
-            [str(xelatex), "-no-pdf", "-interaction=nonstopmode", "-halt-on-error", "figure.tex"],
+            [str(xelatex), "-interaction=nonstopmode", "-halt-on-error", "figure.tex"],
             cwd=workdir, capture_output=True, text=True,
         )
-        if result.returncode != 0 or not (workdir / "figure.xdv").exists():
+        if result.returncode != 0 or not (workdir / "figure.pdf").exists():
             print(f"  tikz render failed: {name_hint}", file=sys.stderr)
             return None
         subprocess.run(
-            [str(dvisvgm), "--font-format=woff2", "-o", "figure.svg", "figure.xdv"],
+            [str(TEXLIVE_BIN / "pdftocairo.exe"), "-png", "-singlefile", "-r", "180", "figure.pdf", "figure"],
             cwd=workdir, capture_output=True, text=True,
         )
-        svg_file = workdir / "figure.svg"
-        if not svg_file.exists():
+        png_file = workdir / "figure.png"
+        if not png_file.exists():
             return None
         public_path.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(svg_file, public_path)
+        shutil.copy2(png_file, public_path)
         return f"/textbook/media/figures/{target_name}"
 
 

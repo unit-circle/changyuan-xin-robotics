@@ -1239,6 +1239,16 @@ button.danger { color: #b13b57 !important; }
 }
 
 @media (max-width: 760px) {
+  html,
+  body {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  .textbook-reader-page,
+  .textbook-reader-page .site-shell {
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
   body { font-size: 16px; }
   .topbar { min-height: 70px; padding: 0 17px; }
   .logo strong { font-size: 15px; }
@@ -2322,4 +2332,193 @@ em,
     min-height: 0;
   }
   .textbook-pager { flex: 0 0 auto; }
+}
+
+/* Final reader layout contract: each surface owns its spacing and scroll. */
+.textbook-reader-page {
+  min-width: 0;
+  height: 100svh;
+  overflow: hidden;
+}
+.textbook-reader-page > .topbar {
+  position: relative;
+  flex: 0 0 auto;
+  min-height: clamp(64px, 5vw, 82px);
+}
+.textbook-reader-page .textbook-reader-shell {
+  display: grid;
+  grid-template-columns: clamp(248px, 23vw, 360px) minmax(0, 1fr);
+  flex: 1 1 auto;
+  min-height: 0;
+  height: auto;
+  overflow: hidden;
+}
+.textbook-sidebar-desktop,
+.textbook-reading-column {
+  min-width: 0;
+  min-height: 0;
+}
+.textbook-sidebar-desktop {
+  overflow: hidden;
+  border-right: 1px solid #cdd7e2;
+}
+.textbook-sidebar {
+  position: static;
+  height: 100%;
+  min-height: 0;
+}
+.textbook-sidebar nav {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+.textbook-sidebar details a,
+.textbook-sidebar nav > a {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.textbook-reading-column {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #fbfcfd;
+}
+.textbook-chapter-header {
+  position: relative;
+  z-index: 2;
+  flex: 0 0 auto;
+  min-width: 0;
+  overflow: hidden;
+  padding: clamp(24px, 4vw, 48px) clamp(24px, 5vw, 72px) clamp(20px, 3vw, 36px);
+  background: rgba(255, 255, 255, .98);
+}
+.textbook-chapter-header h1 {
+  width: 100%;
+  min-width: 0;
+  max-width: 48rem;
+  margin: clamp(18px, 2vw, 30px) 0 0;
+  font-size: clamp(30px, 3.1vw, 52px);
+  line-height: 1.14;
+  overflow-wrap: anywhere;
+  white-space: normal;
+  text-wrap: wrap;
+  word-break: break-word;
+}
+.textbook-article {
+  width: min(100%, 980px);
+  max-width: 980px;
+  flex: 1 1 auto;
+  min-height: 0;
+  margin: 0 auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  padding: clamp(30px, 4vw, 58px) clamp(22px, 5vw, 74px) 86px;
+}
+.textbook-article p,
+.textbook-article li,
+.textbook-callout,
+.textbook-table,
+.textbook-figure figcaption {
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+.textbook-callout-body,
+.textbook-callout-body > p {
+  min-width: 0;
+  max-width: 100%;
+}
+.textbook-article p { white-space: normal; }
+.textbook-bilingual {
+  display: grid;
+  gap: 12px;
+  margin: 0 0 1.15em;
+  padding: 16px 18px;
+  border-left: 3px solid #c6d5e4;
+  background: #f5f8fb;
+}
+.textbook-bilingual p { margin: 0; }
+.textbook-bilingual p + p {
+  padding-top: 12px;
+  border-top: 1px dashed #d0dbe6;
+  color: #536a81;
+  font-size: .94em;
+}
+.textbook-article mjx-container[display="true"] {
+  display: block !important;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 2px 0;
+}
+.textbook-code {
+  margin: 28px 0;
+  border: 1px solid #233b58;
+  border-radius: 8px;
+  box-shadow: 0 8px 22px rgba(16, 34, 55, .1);
+}
+.textbook-code pre {
+  max-width: 100%;
+  overflow-x: auto;
+  white-space: pre;
+  tab-size: 4;
+}
+.textbook-figure {
+  width: min(100%, 900px);
+  margin: 30px auto;
+}
+.textbook-figure img {
+  width: 100%;
+  height: auto;
+  max-height: none;
+  object-fit: contain;
+}
+.textbook-pager { flex: 0 0 auto; }
+
+@media (max-width: 760px) {
+  .textbook-reader-page {
+    height: auto;
+    min-height: 100svh;
+    overflow: visible;
+  }
+  .textbook-reader-page > .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 60;
+  }
+  .textbook-reader-page .textbook-reader-shell {
+    display: block;
+    min-height: 0;
+    overflow: visible;
+  }
+  .textbook-reading-column { overflow: visible; }
+  .textbook-chapter-header {
+    position: sticky;
+    top: 64px;
+    z-index: 20;
+    border-bottom: 1px solid #d5dfe9;
+    overflow: hidden;
+  }
+  .textbook-chapter-header h1 {
+    max-width: 100%;
+    width: min(100%, calc(100vw - 40px));
+    inline-size: min(100%, calc(100vw - 40px));
+    font-size: clamp(27px, 7.8vw, 38px);
+    line-height: 1.25;
+    font-family: var(--font-geist-sans), "Microsoft YaHei", system-ui, sans-serif;
+    font-weight: 650;
+    overflow-wrap: anywhere;
+    word-break: break-all;
+  }
+  .textbook-article {
+    width: 100%;
+    max-width: none;
+    overflow: visible;
+    padding: 30px 20px 64px;
+  }
+  .textbook-article h2 { margin-top: 42px; }
+  .textbook-code,
+  .textbook-math { margin-inline: 0; }
+  .textbook-figure { margin-inline: 0; }
 }
