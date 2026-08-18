@@ -37,6 +37,16 @@ export default async function ResourcesPage() {
       />
 
       <section className="resource-collections" id="collections">
+        <article id="textbook" className="resource-collection textbook-resource">
+          <figure><img src="/textbook/media/figures/generated/v24/part1_matrix_action.png" alt="Matrix action and numerical verification from the robotics textbook" /></figure>
+          <div>
+            <span className="section-eyebrow">OPEN TEXTBOOK · CHINESE / ENGLISH / BILINGUAL</span>
+            <h2>Robotics, AI and intelligent manufacturing</h2>
+            <p>Chinese, English, and bilingual editions connect mathematics, runnable code, experiments, failure analysis, and research applications.</p>
+            <div className="resource-link-list"><Link href="/textbook">Open the complete textbook <span>→</span></Link></div>
+          </div>
+        </article>
+
         <article id="code" className="resource-collection featured">
           <figure><img src="/media/programming-code.jpg" alt="" /></figure>
           <div>

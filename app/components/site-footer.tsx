@@ -22,6 +22,7 @@ export function SiteFooter({
         <a href={`mailto:${currentProfile.email}`}>Email ↗</a>
         <Link href="/research">Research</Link>
         <Link href="/cv">CV</Link>
+        <Link href="/textbook">Textbook</Link>
         <Link className="private-link" href="/private">Private Materials</Link>
       </div>
     </footer>

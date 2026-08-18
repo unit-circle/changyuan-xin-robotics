@@ -6,6 +6,7 @@ const navigation = [
   ["Coursework", "/coursework"],
   ["Publications", "/publications"],
   ["CV", "/cv"],
+  ["Textbook", "/textbook"],
   ["Resources", "/resources"],
 ] as const;
 

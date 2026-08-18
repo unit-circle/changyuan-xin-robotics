@@ -35,7 +35,7 @@ https://changyuanxin.dpdns.org/admin
 打开 PowerShell，执行：
 
 ```powershell
-cd "C:\Users\XIN\Documents\Codex\2026-07-29\referenced-chatgpt-conversation-this-is-untrusted\outputs\phd-academic-website"
+cd "E:\codex\projects\changyuan-xin-robotics"
 ```
 
 确认当前位置：
@@ -47,7 +47,7 @@ Get-Location
 应该显示：
 
 ```text
-C:\Users\XIN\Documents\Codex\2026-07-29\referenced-chatgpt-conversation-this-is-untrusted\outputs\phd-academic-website
+E:\codex\projects\changyuan-xin-robotics
 ```
 
 ## 2. 安装项目依赖

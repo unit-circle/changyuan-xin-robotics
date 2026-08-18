@@ -31,7 +31,7 @@ server-side `ADMIN_EMAILS` allowlist.
 ## Local development on Windows
 
 ```powershell
-cd "C:\Users\XIN\Documents\Codex\2026-07-29\referenced-chatgpt-conversation-this-is-untrusted\outputs\phd-academic-website"
+cd "E:\codex\projects\changyuan-xin-robotics"
 npm run dev
 ```
 

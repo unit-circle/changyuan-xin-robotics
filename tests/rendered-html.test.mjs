@@ -101,6 +101,29 @@ test("server-renders functional private access", async () => {
   assert.match(html, /verified securely on the server/);
 });
 
+test("serves the textbook landing page and all three editions", async () => {
+  const landing = await render("/textbook");
+  assert.equal(landing.status, 200);
+  assert.match(await landing.text(), /568/);
+
+  for (const edition of ["zh", "en", "dual"]) {
+    const chapter = await render(`/textbook/${edition}/02-vectors-matrices-frames`);
+    assert.equal(chapter.status, 200);
+    assert.match(await chapter.text(), /Vectors, matrices|向量、矩阵/);
+  }
+});
+
+test("serves structured textbook content with equations and figures", async () => {
+  const response = await fetch(
+    `${origin}/textbook/content/zh/02-vectors-matrices-frames.json`,
+  );
+  assert.equal(response.status, 200);
+  const chapter = await response.json();
+  assert.equal(chapter.slug, "02-vectors-matrices-frames");
+  assert.ok(chapter.blocks.some((block) => block.type === "math"));
+  assert.ok(chapter.blocks.some((block) => block.type === "figure"));
+});
+
 test("serves dynamic crawler metadata", async () => {
   const [sitemap, robots] = await Promise.all([
     render("/sitemap.xml"),

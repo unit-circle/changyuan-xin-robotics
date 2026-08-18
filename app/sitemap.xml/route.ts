@@ -1,4 +1,5 @@
 import { getContentItems } from "@/lib/site-data";
+import { publishedChapters } from "@/lib/textbook";
 
 export async function GET(request: Request) {
   const origin = new URL(request.url).origin;
@@ -13,6 +14,10 @@ export async function GET(request: Request) {
     "/coursework",
     "/cv",
     "/resources",
+    "/textbook",
+    ...(["zh", "en", "dual"] as const).flatMap((edition) =>
+      publishedChapters.map((chapter) => `/textbook/${edition}/${chapter.slug}`),
+    ),
     ...projects.map((item) => `/research/${item.slug}`),
     ...courses.map((item) => `/coursework/${item.slug}`),
   ];

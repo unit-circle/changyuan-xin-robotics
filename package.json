@@ -12,6 +12,8 @@
     "test": "npm run build && node --test tests/rendered-html.test.mjs",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "typecheck": "tsc --noEmit",
+    "textbook": "python scripts/generate-textbook-site.py",
+    "textbook:sync": "python scripts/generate-textbook-site.py",
     "db:generate": "drizzle-kit generate",
     "cf:login": "wrangler login",
     "cf:whoami": "wrangler whoami",
