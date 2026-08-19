@@ -102,7 +102,7 @@ export const projects: Project[] = [
     role: "Undergraduate Researcher",
     status: "Ongoing research",
     coverImage: "/media/robot-factory.jpg",
-    heroImage: "/media/project-assembly.png",
+    heroImage: "/media/robot-factory.jpg",
     gallery: [
       "/media/aircraft-engine.jpg",
       "/media/project-digital.png",
@@ -140,7 +140,7 @@ export const projects: Project[] = [
     role: "Core Project Member",
     status: "Completed project stage",
     coverImage: "/media/exoskeleton-field.jpg",
-    heroImage: "/media/project-exoskeleton.png",
+    heroImage: "/media/exoskeleton-field.jpg",
     gallery: [
       "/media/mechanical-engineering.jpg",
       "/media/design-prototype.jpg",
@@ -178,7 +178,7 @@ export const projects: Project[] = [
     role: "Independent Study",
     status: "Continuously updated",
     coverImage: "/media/project-simulation.png",
-    heroImage: "/media/nasa-robotic-arm.jpg",
+    heroImage: "/media/robotic-crawler.jpg",
     gallery: [
       "/media/neural-network-portrait.svg",
       "/media/programming-code.jpg",
@@ -216,7 +216,7 @@ export const projects: Project[] = [
     role: "Research Participant",
     status: "Research experience",
     coverImage: "/media/project-digital.png",
-    heroImage: "/media/digital-twin-architecture.png",
+    heroImage: "/media/warehouse-logistics.jpg",
     gallery: [
       "/media/warehouse-logistics.jpg",
       "/media/robotic-crawler.jpg",
@@ -393,7 +393,7 @@ export const resources = [
   {
     title: "Code & Simulation",
     detail: "Project repositories and reproducible workflows",
-    image: "/media/project-simulation.png",
+    image: "/media/warehouse-robot.jpg",
     href: "/resources#code",
   },
   {

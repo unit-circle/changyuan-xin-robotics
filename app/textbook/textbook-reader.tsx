@@ -217,6 +217,16 @@ export function TextbookReader({
           )}
         </article>
       </section>
+      <aside className="textbook-reader-rail" aria-label="Chapter reading route">
+        <span className="section-eyebrow">本章路线</span>
+        <ol>
+          <li>问题与可观察量</li>
+          <li>直觉与符号</li>
+          <li>公式与推导</li>
+          <li>相邻代码</li>
+          <li>失败分析与研究出口</li>
+        </ol>
+      </aside>
     </div>
   );
 }

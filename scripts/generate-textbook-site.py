@@ -3,9 +3,10 @@
 
 This script is the single source-to-site pipeline. It reads the known macros
 and environments, expands bilingual helpers, preserves math, copies raster
-figures, and renders TikZ fragments to browser-safe PNG files with the local
-TeX Live toolchain. PNG is intentional here: dvisvgm can collapse TeX line
-breaks in bilingual nodes onto one baseline, producing overlapping glyphs.
+figures, and renders TikZ fragments to browser-safe SVG files with the local
+TeX Live toolchain. SVG is produced from the finished PDF with pdftocairo so
+the browser keeps the original vector geometry and text sharp on high-DPI
+screens.
 """
 
 from __future__ import annotations
@@ -216,8 +217,11 @@ class TikzRenderer:
     source: Path
 
     def render(self, tikz_body: str, name_hint: str) -> str | None:
-        digest = hashlib.sha1(tikz_body.encode("utf-8")).hexdigest()[:12]
-        target_name = f"{name_hint}-{digest}.png"
+        # Include the renderer contract in the digest so old raster assets
+        # cannot silently survive a format or quality change.
+        render_contract = "pdf-to-svg-v2"
+        digest = hashlib.sha1(f"{render_contract}\n{tikz_body}".encode("utf-8")).hexdigest()[:12]
+        target_name = f"{name_hint}-{digest}.svg"
         public_path = MEDIA_ROOT / "figures" / target_name
         if public_path.exists():
             return f"/textbook/media/figures/{target_name}"
@@ -233,14 +237,14 @@ class TikzRenderer:
             print(f"  tikz render failed: {name_hint}", file=sys.stderr)
             return None
         subprocess.run(
-            [str(TEXLIVE_BIN / "pdftocairo.exe"), "-png", "-singlefile", "-r", "180", "figure.pdf", "figure"],
+            [str(TEXLIVE_BIN / "pdftocairo.exe"), "-svg", "figure.pdf", "figure.svg"],
             cwd=workdir, capture_output=True, text=True,
         )
-        png_file = workdir / "figure.png"
-        if not png_file.exists():
+        svg_file = workdir / "figure.svg"
+        if not svg_file.exists():
             return None
         public_path.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(png_file, public_path)
+        shutil.copy2(svg_file, public_path)
         return f"/textbook/media/figures/{target_name}"
 
 

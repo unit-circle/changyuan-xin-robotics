@@ -1,3 +1,5 @@
+/* eslint-disable @next/next/no-img-element */
+
 import Link from "next/link";
 import { SiteHeader } from "@/app/components/site-header";
 import { SiteFooter } from "@/app/components/site-footer";
@@ -27,15 +29,22 @@ export default async function TextbookPage() {
           <span className="section-eyebrow">OPEN ROBOTICS TEXTBOOK / 2026</span>
           <h1>机器人、人工智能与智能制造综合教材</h1>
           <p>从数学与科学编程出发，把机器人学、视觉、规划、控制、强化学习、多机协同与科研证据组织成一条可执行的学习链。</p>
-          <a className="textbook-source-link" href={textbookLinks.source} target="_blank" rel="noreferrer">
-            查看可修改的 LaTeX 源仓库 ↗
-          </a>
+          <div className="textbook-masthead-actions">
+            <Link className="button-primary" href={`/textbook/zh/${firstPublished.slug}`}>进入中文阅读 <span>→</span></Link>
+            <a className="textbook-source-link" href={textbookLinks.source} target="_blank" rel="noreferrer">查看可修改的 LaTeX 源仓库 ↗</a>
+          </div>
         </div>
-        <dl>
-          <div><dt>CHAPTERS</dt><dd>{textbookChapters.length}</dd></div>
-          <div><dt>PARTS</dt><dd>{parts.length}</dd></div>
-          <div><dt>READY</dt><dd>{publishedChapters.length}</dd></div>
-        </dl>
+        <aside className="textbook-progress-card">
+          <img src="/media/digital-twin-architecture.png" alt="Robot learning system architecture" />
+          <span className="section-eyebrow">LEARNING SYSTEM</span>
+          <strong>先理解，再编码，再实验</strong>
+          <p>每章将直觉、公式、代码、图示与研究出口放在同一条阅读路径中。</p>
+          <div className="textbook-progress-stats">
+            <span><b>{publishedChapters.length}</b> 已发布章节</span>
+            <span><b>{parts.length}</b> 个知识部分</span>
+            <span><b>{textbookChapters.length}</b> 总目录章节</span>
+          </div>
+        </aside>
       </header>
 
       <section className="textbook-editions" aria-label="Choose an edition">

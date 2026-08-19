@@ -48,9 +48,13 @@ export default async function Home() {
       <section className="hero-panel">
         <div className="hero-visual">
           <div className="hero-photo" role="img" aria-label="Industrial robotic assembly research" />
-          <div className="photo-reserve">
-            <span>PORTRAIT AREA</span>
-            <strong>Your photograph will live here</strong>
+          <div className="hero-research-card">
+            <img src="/media/aircraft-engine.jpg" alt="Aero-engine research context" />
+            <div>
+              <span>RESEARCH CONTEXT</span>
+              <strong>Aero-engine blade assembly</strong>
+              <small>Perception · Planning · Coordination</small>
+            </div>
           </div>
           <blockquote>
             <span className="quote-mark">“</span>
