@@ -2764,3 +2764,69 @@ em,
   .textbook-masthead{padding-inline:20px}
   .textbook-reader-page .textbook-reader-shell{height:auto}
 }
+
+/* Reader width contract: one content surface, no reserved right rail. */
+.textbook-reader-rail{display:none !important}
+.textbook-reader-page .textbook-reader-shell{
+  display:grid;
+  grid-template-columns:clamp(248px,17vw,320px) minmax(0,1fr) !important;
+  width:100%;
+  max-width:none;
+  overflow:hidden;
+}
+.textbook-reading-column{
+  grid-column:2 !important;
+  width:100%;
+  min-width:0;
+}
+.textbook-chapter-header{
+  padding:18px clamp(22px,2.8vw,52px) 20px;
+}
+.textbook-chapter-header > div:first-child{
+  align-items:center;
+  min-height:24px;
+}
+.textbook-chapter-header h1{
+  max-width:none;
+  margin-top:14px;
+  font-size:clamp(34px,3.2vw,52px);
+  line-height:1.1;
+}
+.textbook-edition-switcher{margin-top:14px}
+.textbook-article{
+  width:100%;
+  max-width:none;
+  padding:clamp(28px,3vw,48px) clamp(22px,2.8vw,58px) 80px;
+}
+.textbook-article p,
+.textbook-article li,
+.textbook-article h2,
+.textbook-article h3{
+  max-width:none;
+}
+.textbook-callout,
+.textbook-table-wrap,
+.textbook-figure,
+.textbook-code,
+.textbook-math,
+.textbook-formula,
+.textbook-route,
+.textbook-state,
+.textbook-article > .textbook-pager{
+  width:100%;
+  max-width:none;
+  margin-left:0;
+  margin-right:0;
+}
+.textbook-figure img{width:100%;max-width:none}
+.textbook-code pre{max-width:none}
+@media (min-width:761px){
+  .textbook-reader-page .textbook-reader-shell{grid-template-columns:clamp(248px,17vw,320px) minmax(0,1fr) !important}
+}
+@media (max-width:760px){
+  .textbook-reader-page .textbook-reader-shell{display:block !important}
+  .textbook-reading-column{width:100%;grid-column:auto !important}
+  .textbook-chapter-header{padding:18px 20px 18px}
+  .textbook-chapter-header h1{margin-top:14px;font-size:clamp(28px,8vw,38px)}
+  .textbook-article{padding:28px 20px 64px}
+}
