@@ -195,7 +195,14 @@ export function TextbookReader({
               </Link>
             ))}
           </div>
-          <h1>{chapterTitle(chapter, edition)}</h1>
+          <h1 className={edition === "dual" ? "textbook-dual-title" : undefined}>
+            {edition === "dual" ? (
+              <>
+                <span className="textbook-title-zh">{chapter.titleZh}</span>
+                <span className="textbook-title-en">{chapter.titleEn}</span>
+              </>
+            ) : chapterTitle(chapter, edition)}
+          </h1>
         </header>
         <article className="textbook-article" ref={articleRef}>
           {!content ? (
@@ -364,13 +371,22 @@ function CodeBlock({ block }: { block: Block }) {
   return (
     <figure className="textbook-code">
       <figcaption>
-        <span>{block.caption || block.language || "Code"}</span>
-        <button type="button" onClick={copy} aria-label="Copy code">
+        <span className="textbook-code-title">
+          <i aria-hidden="true" />
+          <b>{block.caption || "运行示例"}</b>
+          <small>{(block.language || "text").toUpperCase()}</small>
+        </span>
+        <button type="button" onClick={copy} aria-label="Copy code" className="textbook-code-copy">
           {copied ? "已复制" : "复制"}
         </button>
       </figcaption>
       <pre>
-        <code>{block.code}</code>
+        <code>{(block.code || "").split("\n").map((line, index) => (
+          <span className="textbook-code-line" key={`${index}-${line}`}>
+            <span className="textbook-code-number" aria-hidden="true">{index + 1}</span>
+            <span className="textbook-code-text">{line || " "}</span>
+          </span>
+        ))}</code>
       </pre>
     </figure>
   );

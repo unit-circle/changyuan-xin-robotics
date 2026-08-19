@@ -2405,24 +2405,56 @@ em,
   text-wrap: wrap;
   word-break: break-word;
 }
+.textbook-dual-title > span {
+  display: block;
+}
+.textbook-title-en {
+  margin-top: 8px;
+  color: #46617d;
+  font-family: var(--font-geist-sans), "Microsoft YaHei", system-ui, sans-serif;
+  font-size: .62em;
+  font-weight: 650;
+  line-height: 1.22;
+}
 .textbook-article {
-  width: min(100%, 980px);
-  max-width: 980px;
+  width: 100%;
+  max-width: none;
   flex: 1 1 auto;
   min-height: 0;
   margin: 0 auto;
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-gutter: stable;
-  padding: clamp(30px, 4vw, 58px) clamp(22px, 5vw, 74px) 86px;
+  padding: clamp(32px, 4vw, 58px) clamp(30px, 5vw, 76px) 86px;
 }
 .textbook-article p,
 .textbook-article li,
-.textbook-callout,
-.textbook-table,
-.textbook-figure figcaption {
+.textbook-article h2,
+.textbook-article h3 {
+  max-width: 82ch;
   overflow-wrap: anywhere;
   word-break: normal;
+}
+.textbook-callout,
+.textbook-table-wrap,
+.textbook-figure,
+.textbook-code,
+.textbook-math,
+.textbook-formula,
+.textbook-route,
+.textbook-state {
+  width: min(100%, 1180px);
+}
+.textbook-callout,
+.textbook-table-wrap,
+.textbook-figure,
+.textbook-code,
+.textbook-math,
+.textbook-formula,
+.textbook-route,
+.textbook-state {
+  margin-left: 0;
+  margin-right: 0;
 }
 .textbook-callout-body,
 .textbook-callout-body > p {
@@ -2453,20 +2485,76 @@ em,
   padding: 2px 0;
 }
 .textbook-code {
-  margin: 28px 0;
+  margin: 32px 0;
   border: 1px solid #233b58;
   border-radius: 8px;
   box-shadow: 0 8px 22px rgba(16, 34, 55, .1);
+  background: #101c2c;
+}
+.textbook-code-title {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 10px;
+}
+.textbook-code-title i {
+  width: 9px;
+  height: 9px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: #ef806f;
+  box-shadow: 14px 0 #e7b65c, 28px 0 #68c7a3;
+  margin-right: 20px;
+}
+.textbook-code-title b {
+  min-width: 0;
+  overflow: hidden;
+  color: #dce9f7;
+  font-size: 12px;
+  font-weight: 750;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.textbook-code-title small {
+  padding: 3px 6px;
+  border: 1px solid #49627c;
+  border-radius: 3px;
+  color: #9eb8d1;
+  font-family: var(--font-geist-mono), Consolas, monospace;
+  font-size: 9px;
+  font-weight: 750;
+  letter-spacing: .08em;
 }
 .textbook-code pre {
   max-width: 100%;
   overflow-x: auto;
   white-space: pre;
   tab-size: 4;
+  padding: 18px 0 20px;
+}
+.textbook-code pre code {
+  display: block;
+  min-width: max-content;
+}
+.textbook-code-line {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  min-height: 1.72em;
+  padding-right: 24px;
+}
+.textbook-code-number {
+  padding-right: 12px;
+  color: #58718e;
+  font-size: 11px;
+  text-align: right;
+  user-select: none;
+}
+.textbook-code-text {
+  color: #e4eef8;
 }
 .textbook-figure {
-  width: min(100%, 900px);
-  margin: 30px auto;
+  width: min(100%, 1180px);
+  margin: 30px 0;
 }
 .textbook-figure img {
   width: 100%;
@@ -2504,12 +2592,12 @@ em,
     max-width: 100%;
     width: min(100%, calc(100vw - 40px));
     inline-size: min(100%, calc(100vw - 40px));
-    font-size: clamp(27px, 7.8vw, 38px);
+    font-size: clamp(24px, 6.5vw, 33px);
     line-height: 1.25;
     font-family: var(--font-geist-sans), "Microsoft YaHei", system-ui, sans-serif;
     font-weight: 650;
     overflow-wrap: anywhere;
-    word-break: break-all;
+    word-break: break-word;
   }
   .textbook-article {
     width: 100%;
