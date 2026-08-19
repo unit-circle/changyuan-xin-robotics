@@ -2341,7 +2341,9 @@ em,
   overflow: hidden;
 }
 .textbook-reader-page > .topbar {
-  position: relative;
+  position: sticky;
+  top: 0;
+  z-index: 60;
   flex: 0 0 auto;
   min-height: clamp(64px, 5vw, 82px);
 }
@@ -2390,14 +2392,14 @@ em,
   flex: 0 0 auto;
   min-width: 0;
   overflow: hidden;
-  padding: clamp(24px, 4vw, 48px) clamp(24px, 5vw, 72px) clamp(20px, 3vw, 36px);
+  padding: clamp(18px, 2.5vw, 30px) clamp(24px, 4vw, 60px) clamp(16px, 2vw, 24px);
   background: rgba(255, 255, 255, .98);
 }
 .textbook-chapter-header h1 {
   width: 100%;
   min-width: 0;
   max-width: 48rem;
-  margin: clamp(18px, 2vw, 30px) 0 0;
+  margin: clamp(12px, 1.5vw, 20px) 0 0;
   font-size: clamp(30px, 3.1vw, 52px);
   line-height: 1.14;
   overflow-wrap: anywhere;
@@ -2425,7 +2427,7 @@ em,
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-gutter: stable;
-  padding: clamp(32px, 4vw, 58px) clamp(30px, 5vw, 76px) 86px;
+  padding: clamp(24px, 3vw, 42px) clamp(24px, 4vw, 60px) 70px;
 }
 .textbook-article p,
 .textbook-article li,
@@ -2563,6 +2565,15 @@ em,
   object-fit: contain;
 }
 .textbook-pager { flex: 0 0 auto; }
+.textbook-article > .textbook-pager {
+  width: min(100%, 1180px);
+  margin: 58px 0 0;
+  border: 1px solid #d2dce6;
+  background: #fff;
+}
+.textbook-article > .textbook-pager a {
+  padding: 22px 24px;
+}
 
 @media (max-width: 760px) {
   .textbook-reader-page {
@@ -2583,7 +2594,7 @@ em,
   .textbook-reading-column { overflow: visible; }
   .textbook-chapter-header {
     position: sticky;
-    top: 64px;
+    top: 70px;
     z-index: 20;
     border-bottom: 1px solid #d5dfe9;
     overflow: hidden;
@@ -2603,10 +2614,11 @@ em,
     width: 100%;
     max-width: none;
     overflow: visible;
-    padding: 30px 20px 64px;
+    padding: 24px 20px 58px;
   }
   .textbook-article h2 { margin-top: 42px; }
   .textbook-code,
   .textbook-math { margin-inline: 0; }
   .textbook-figure { margin-inline: 0; }
+  .textbook-article > .textbook-pager { margin-top: 42px; }
 }

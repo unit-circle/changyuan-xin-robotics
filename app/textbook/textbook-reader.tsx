@@ -208,31 +208,43 @@ export function TextbookReader({
           {!content ? (
             <p className="textbook-loading">正在载入本章…</p>
           ) : (
-            content.blocks.map((item, index) => (
-              <TextbookBlock block={item} key={`${item.type}-${index}`} />
-            ))
+            <>
+              {content.blocks.map((item, index) => (
+                <TextbookBlock block={item} key={`${item.type}-${index}`} />
+              ))}
+              <ChapterPager previous={previous} next={next} edition={edition} />
+            </>
           )}
         </article>
-        <nav className="textbook-pager" aria-label="Chapter pagination">
-          {previous ? (
-            <Link href={`/textbook/${edition}/${previous.slug}`}>
-              <small>上一章</small>
-              <span>← {chapterTitle(previous, edition)}</span>
-            </Link>
-          ) : (
-            <span />
-          )}
-          {next ? (
-            <Link href={`/textbook/${edition}/${next.slug}`}>
-              <small>下一章</small>
-              <span>{chapterTitle(next, edition)} →</span>
-            </Link>
-          ) : (
-            <span />
-          )}
-        </nav>
       </section>
     </div>
+  );
+}
+
+function ChapterPager({
+  previous,
+  next,
+  edition,
+}: {
+  previous?: (typeof textbookChapters)[number];
+  next?: (typeof textbookChapters)[number];
+  edition: Edition;
+}) {
+  return (
+    <nav className="textbook-pager" aria-label="Chapter pagination">
+      {previous ? (
+        <Link href={`/textbook/${edition}/${previous.slug}`}>
+          <small>上一章</small>
+          <span>← {chapterTitle(previous, edition)}</span>
+        </Link>
+      ) : <span />}
+      {next ? (
+        <Link href={`/textbook/${edition}/${next.slug}`}>
+          <small>下一章</small>
+          <span>{chapterTitle(next, edition)} →</span>
+        </Link>
+      ) : <span />}
+    </nav>
   );
 }
 
