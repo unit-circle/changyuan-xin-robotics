@@ -2745,3 +2745,22 @@ em,
 @media (max-width:1439px){.textbook-reader-rail{display:none}}
 @media (max-width:980px){.textbook-masthead{grid-template-columns:1fr}.textbook-progress-card{max-width:560px}.textbook-reader-page .textbook-reader-shell{grid-template-columns:272px minmax(0,1fr)}}
 @media (max-width:760px){.textbook-masthead{padding:44px 20px 34px}.textbook-masthead h1{font-size:40px}.textbook-editions{grid-template-columns:1fr}.textbook-editions article{min-height:0;border-right:0;border-bottom:1px solid #d6dfdb}.textbook-part-index{padding:54px 20px 76px}.textbook-part-index article{grid-template-columns:34px minmax(0,1fr) 32px;gap:10px}.textbook-part-index article strong{grid-column:2;font-size:12px}.textbook-part-index article a{grid-column:3;grid-row:1/span 2}.textbook-reader-page .textbook-reader-shell{height:auto}.textbook-article{padding:34px 20px 70px;font-size:16px}.textbook-figure,.textbook-code{width:100%;margin-inline:0}.textbook-figure img{max-width:100%}}
+
+/* Geometry correction: the reader owns all remaining browser width. */
+.textbook-landing,.textbook-reader-page{width:100%;max-width:none;margin:0}
+.textbook-masthead{padding-inline:clamp(20px,5vw,80px)}
+.textbook-part-index{max-width:1320px}
+@media (min-width:761px){
+  .textbook-reader-page .textbook-reader-shell{grid-template-columns:clamp(228px,20vw,300px) minmax(0,1fr);height:calc(100svh - 76px)}
+  .textbook-reading-column{min-width:0}
+  .textbook-article{width:100%;max-width:1280px;margin:0 auto;padding-inline:clamp(28px,3.2vw,58px)}
+  .textbook-figure,.textbook-code,.textbook-math,.textbook-formula,.textbook-table-wrap{width:min(100%,1120px)}
+}
+@media (min-width:1800px){
+  .textbook-reader-page .textbook-reader-shell{grid-template-columns:300px minmax(0,1fr) 220px}
+  .textbook-reader-rail{display:block;grid-column:3;grid-row:1}
+}
+@media (max-width:760px){
+  .textbook-masthead{padding-inline:20px}
+  .textbook-reader-page .textbook-reader-shell{height:auto}
+}
